@@ -12,6 +12,7 @@ def main():
     cell_2 = Cell(500, 600, 500, 600, win)
     cell_1.draw()
     cell_2.draw()
+    cell_1.draw_move(cell_2, True)
     #############################
 
     win.wait_for_close()
