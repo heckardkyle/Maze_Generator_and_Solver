@@ -1,3 +1,4 @@
+import random
 import time
 
 from cell import Cell
@@ -13,6 +14,7 @@ class Maze():
             cell_size_x,
             cell_size_y,
             win=None,
+            seed=None
         ):
         self._x1 = x1
         self._y1 = y1
@@ -21,6 +23,8 @@ class Maze():
         self._cell_size_x = cell_size_x
         self._cell_size_y = cell_size_y
         self._win = win
+        if seed is not None:
+            self._seed = random.seed(seed)
         self._create_cells()
 
     def _create_cells(self):
@@ -55,3 +59,64 @@ class Maze():
         max_row = len(self._cells[0]) - 1
         self._cells[max_col][max_row].has_bottom_wall = False
         self._draw_cell(max_col, max_row)
+
+    def _break_walls_r(self, i, j):
+        self._cells[i][j].visited = True
+        while True:
+            neighbors = self._check_neighboring_cells(i, j)
+            if len(neighbors) <= 0:
+                self._draw_cell(i, j)
+                return
+            next_cell_direction = neighbors[random.randrange(0, len(neighbors))]
+            next_col, next_row = self._break_joining_wall(i, j, next_cell_direction)
+            self._break_walls_r(next_col, next_row)
+
+    def _check_neighboring_cells(self, i, j):
+        neighbor_cells_to_visit = []
+        #left_cell
+        if i - 1 >= 0:
+            if not self._cells[i-1][j].visited:
+                neighbor_cells_to_visit.append("left")
+        #right_cell
+        if i + 1 < len(self._cells):
+            if not self._cells[i+1][j].visited:
+                neighbor_cells_to_visit.append("right")
+        #top_cell
+        if j - 1 >= 0:
+            if not self._cells[i][j-1].visited:
+                neighbor_cells_to_visit.append("top")
+        #bottom_cell
+        if j + 1 < len(self._cells[0]):
+            if not self._cells[i][j+1].visited:
+                neighbor_cells_to_visit.append("bottom")
+        
+        return neighbor_cells_to_visit
+        
+    def _break_joining_wall(self, i, j, next_cell_direction):
+        if next_cell_direction == "left":
+            self._cells[i][j].has_left_wall = False
+            self._draw_cell(i, j)
+            self._cells[i-1][j].has_right_wall = False
+            self._draw_cell(i-1, j)
+            return i-1, j
+        
+        if next_cell_direction == "right":
+            self._cells[i][j].has_right_wall = False
+            self._draw_cell(i, j)
+            self._cells[i+1][j].has_left_wall = False
+            self._draw_cell(i+1, j)
+            return i+1, j
+        
+        if next_cell_direction == "top":
+            self._cells[i][j].has_top_wall = False
+            self._draw_cell(i, j)
+            self._cells[i][j-1].has_bottom_wall = False
+            self._draw_cell(i, j-1)
+            return i, j-1
+        
+        if next_cell_direction == "bottom":
+            self._cells[i][j].has_bottom_wall = False
+            self._draw_cell(i, j)
+            self._cells[i][j+1].has_top_wall = False
+            self._draw_cell(i, j+1)
+            return i, j+1
