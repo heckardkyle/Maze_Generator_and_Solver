@@ -50,7 +50,7 @@ class Maze():
     
     def _animate(self):
         self._win.redraw()
-        time.sleep(0.1)
+        time.sleep(0.005)
 
     def _break_entrance_and_exit(self):
         self._cells[0][0].has_top_wall = False
@@ -120,3 +120,8 @@ class Maze():
             self._cells[i][j+1].has_top_wall = False
             self._draw_cell(i, j+1)
             return i, j+1
+        
+    def _reset_cells_visited(self):
+        for i in range(len(self._cells)):
+            for j in range(len(self._cells[0])):
+                self._cells[i][j].visited = False

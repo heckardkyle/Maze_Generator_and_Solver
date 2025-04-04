@@ -6,12 +6,13 @@ from window import Window
 
 
 def main():
-    win = Window(800, 600)
+    win = Window(800, 800)
 
     # test drawing lines #
-    maze = Maze(10, 10, 10, 10, 50, 50, win)
+    maze = Maze(5, 5, 5, 5, 50, 50, win)
     maze._break_entrance_and_exit()
     maze._break_walls_r(0,0)
+    maze._reset_cells_visited()
     #############################
 
     win.wait_for_close()
